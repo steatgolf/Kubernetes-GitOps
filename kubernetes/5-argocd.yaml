@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/steatgolf/kubernetes-project.git
     targetRevision: HEAD
-    path: kubernetes/manifest
+    path: kubernetes
   destination:
     server: https://kubernetes.default.svc
     namespace: webapp
