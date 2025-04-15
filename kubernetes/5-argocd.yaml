@@ -6,13 +6,15 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: EKS
+  project: default
   source:
     repoURL: https://github.com/steatgolf/kubernetes-project.git
     targetRevision: HEAD
     path: kubernetes/manifest
   destination:
     server: https://kubernetes.default.svc
+    namespace: webapp
+
   syncPolicy:
     automated:
       prune: true
@@ -20,6 +22,6 @@ spec:
       allowEmpty: false
     syncOptions:
       - Validate=true
-      - CreateNamespace=false
-      - PrunePropagationPolicy=foreground
-      - PruneLast=true
+      - CreateNamespace=true
+      # - PrunePropagationPolicy=foreground
+      # - PruneLast=true
