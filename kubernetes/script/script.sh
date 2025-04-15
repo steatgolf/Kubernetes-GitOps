@@ -3,6 +3,7 @@
 # Fail on error and undefined variables
 set -euo pipefail
 
+cd ..
 
 # Create namespace, deployment, service, ingress and ArgoCD application
 kubectl apply -f 1-namespace.yaml
