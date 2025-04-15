@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-nginx
+  namespace: webapp
+  labels:
+    app: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dev
+  template:
+    metadata:
+      labels:
+        app: dev
+    spec:
+      containers:
+        - name: nginx-dev
+          image: nginx:1.27.4-alpine
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "20Mi"
+            requests:
+              cpu: "150m"
+              memory: "15Mi"
+            
