@@ -64,7 +64,7 @@ Follow these steps to set up the infrastructure:
     ```bash
     terraform apply -auto-approve
     ```
-    This command will provision the necessary infrastructure on your cloud provider, including the Kubernetes cluster.
+    This command will provision the necessary infrastructure on AWS cloud provider, including the Kubernetes cluster.
 
 4.  **Authenticate with EKS cluster**
 
