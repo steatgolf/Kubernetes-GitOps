@@ -1,6 +1,6 @@
 # 🚀 Kubenetes with GitOps project
 
-Infrastructure and application deployment using **Terraform**, **Kubernetes**, **Helm**, and **NGINX Ingress Controller**.
+AWS EKS Infrastructure and application deployment using **Terraform**, **Helm**, **NGINX Ingress Controller** and **ArgoCD**.
 
 ---
 
@@ -8,20 +8,12 @@ Infrastructure and application deployment using **Terraform**, **Kubernetes**, *
 
 | Tool        | Purpose                                      |
 |-------------|----------------------------------------------|
-| Terraform   | Infrastructure provisioning (EKS, Ingress Nginx, ArgoCD)   |
+| Terraform   | Infrastructure provisioning (EKS cluster, Ingress Nginx, ArgoCD)   |
 | Kubernetes  | Container orchestration                      |
-| Helm        | Package management and templating for K8s    |
+| Helm        | Package management and for kubernetes    |
 | NGINX Ingress | Ingress controller for routing to service       |
-
+| ArgoCD | Automate the deployment and lifecycle management of applications running on Kubernetes clusters   |
 ---
-
-## 🧭 Project Structure
-
----
-
-# Project Title
-
-**A robust and scalable application infrastructure managed with Terraform, Kubernetes, Helm, and Nginx Ingress.**
 
 ## Overview
 
@@ -32,66 +24,25 @@ This README provides an overview of the technologies used, the project structure
 ## Technology Stack
 
 * **Terraform:** An open-source infrastructure as code (IaC) software tool that allows you to define and provision infrastructure using a declarative configuration language. We use Terraform to provision the underlying cloud resources necessary for our Kubernetes cluster and other dependencies.
-* **Kubernetes (k8s):** A portable, extensible, open-source platform for managing containerized workloads and services. Kubernetes automates the deployment, scaling, and management of containerized applications.
+
+* **Kubernetes:** A portable, extensible, open-source platform for managing containerized workloads and services. Kubernetes automates the deployment, scaling, and management of containerized applications.
+
 * **Helm:** A package manager for Kubernetes. Helm charts define, install, and upgrade even the most complex Kubernetes applications. We use Helm to package and deploy our application and its dependencies within the Kubernetes cluster.
+
 * **Nginx Ingress Controller:** An Ingress controller that uses Nginx as a reverse proxy and load balancer. It provides HTTP and HTTPS routing from outside the cluster to services within the Kubernetes cluster based on rules defined in Ingress resources.
 
-## Project Structure
-
-
-
-├── terraform/        # Terraform configurations for infrastructure provisioning
-│   ├── main.tf       # Main Terraform configuration
-│   ├── variables.tf  # Define input variables for Terraform
-│   ├── outputs.tf    # Define output values from Terraform
-│   ├── providers.tf  # Define the cloud providers used
-│   └── ...           # Other Terraform modules and configurations
-├── kubernetes/       # Kubernetes manifests and configurations
-│   ├── deployment.yaml
-│   ├── service.yaml
-│   ├── ...           # Other Kubernetes resource definitions
-├── helm/             # Helm chart for deploying the application
-│   ├── Chart.yaml    # Metadata about the Helm chart
-│   ├── values.yaml   # Default configuration values for the chart
-│   ├── templates/    # Kubernetes manifest templates
-│   └── ...           # Other Helm chart files
-├── ingress/          # Kubernetes Ingress configurations
-│   └── nginx-ingress.yaml # Ingress resource definition for Nginx
-├── README.md         # This file
-└── ...               # Other project-related files
-
-
-
----
-
-├── kubernetes
-│   ├── 1-namespace.yaml    # Create Kubernetes webapp namespace
-│   ├── 2-deployment.yaml
-│   ├── 3-service.yaml
-│   ├── 4-ingress.yaml
-│   ├── 5-argocd.yaml
-│   ├── dev-deployment.yaml
-│   ├── dev-service.yaml
-│   └── script
-│       └── script.sh
-└── terraform               # Terraform configurations for infrastructure provisioning
-    ├── 0-local.tf          # local variable
-    ├── 1-network.tf        # Create network object for EKS cluster
-    ├── 2-eks.tf            # Create EKS Cluster, worker node and IAM role
-    ├── 3-helm.tf           # Create Nginx ingress and ArgoCD application
-    ├── provider.tf         # Define the cloud providers used
-    └── values
-        └── argocd.yaml     # Define custom values for ArgoCD application
+* **ArgoCD:** GitOps-based continuous delivery tool for Kubernetes. It helps you automate the deployment and lifecycle management of applications running on Kubernetes clusters.
 
 
 ## Prerequisites
 
 Before you begin, ensure you have the following tools installed and configured:
 
-* **Terraform:** [Installation Guide](https://developer.hashicorp.com/terraform/downloads)
-* **kubectl:** The Kubernetes command-line tool. [Installation Guide](https://kubernetes.io/docs/tasks/tools/)
-* **Helm:** The Kubernetes package manager. [Installation Guide](https://helm.sh/docs/intro/install/)
-* **Cloud Provider CLI:** (e.g., AWS CLI, Azure CLI, gcloud CLI) configured with the necessary credentials to provision resources on your chosen cloud provider.
+* **Terraform:** [Installation Guide](https://developer.hashicorp.com/terraform/install)
+* **kubectl:** [Installation Guide](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html)
+* **Helm:** [Installation Guide](https://helm.sh/docs/intro/install/)
+* **AWS CLI:** [Installation Guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+
 
 ## Getting Started
 
@@ -116,7 +67,7 @@ Follow these steps to set up the infrastructure:
     This command will provision the necessary infrastructure on your cloud provider, including the Kubernetes cluster.
 
 4.  **Authenticate with EKS cluster:**
-    Once the Kubernetes cluster is provisioned, you will need to authenticate with EKS cluster using `AWS cli`.
+    Once the Kubernetes cluster is provisioned, you will need to authenticate with EKS cluster using `AWS CLI`.
     Authentication & Authorization: It uses your AWS credentials to authenticate with EKS and fetch details about the specified cluster.
      ```bash
     aws eks update-kubeconfig \
@@ -124,15 +75,15 @@ Follow these steps to set up the infrastructure:
     --name dev-cluster
     ```
 
-5.  **Create EKS infrastructure and ArgoCD with bash script:**
+5.  **Create EKS resource and ArgoCD with bash script:**
     Navigate to the `kubernetes/script` directory and execute bash script.
     ```bash
     cd ../kubernetes/script
     ./script.sh
     ```
 
-6.  **Verify kubernetes infrastructure in webapp namespace after create with bash script:**
-    Verify deployment, service and pod is running
+6.  **Verify kubernetes resource in webapp namespace after create with bash script:**
+    Verify deployment, service and pod is running.
     ```bash
     kubectl get all -n webapp
     ```
@@ -153,7 +104,7 @@ Follow these steps to set up the infrastructure:
     ```bash
     curl -i --header "Host: dev.web.example.com" http://aff6168619c6a429b8e1e4b660a00173-1339339846.us-east-1.elb.amazonaws.com
     ```
-8.  **Configure ArgoCD application:**
+8.  **Initialize ArgoCD application:**
 
     Get ArgoCD password from Kubernetes secrets.
     ```bash
@@ -170,6 +121,23 @@ Follow these steps to set up the infrastructure:
     kubectl port-forward svc/argocd-server -n argocd 8080:80
     ```
 
-8.  **Test ArgoCD application:**
+9.  **Test ArgoCD application:**
 
-    Edit replicas from 1 to 2 in deployment.yaml and wait 3 minutes or manual sync
+    Edit replicas from 1 to 2 in deployment.yaml, wait 3 minutes or manual sync.
+    Nginx pod in `service name nginx` will increase to 2.
+
+
+8.  **Clean up project:**
+
+    Delete kubernetes webapp namespace.
+
+     ```bash
+    kubectl delete ns webapp
+    terraform init
+    ```
+    Delete EKS resource with terraform.
+
+    ```bash
+    cd terraform
+    terraform destroy -auto-approve
+    ```
