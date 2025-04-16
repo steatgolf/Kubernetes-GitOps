@@ -124,14 +124,14 @@ Follow these steps to set up the infrastructure:
     --name dev-cluster
     ```
 
-5.  **Create EKS namespace, deployment, service, nginx ingress and ArgoCD with bash script:**
+5.  **Create EKS infrastructure and ArgoCD with bash script:**
     Navigate to the `kubernetes/script` directory and execute bash script.
     ```bash
     cd ../kubernetes/script
     ./script.sh
     ```
 
-6.  **Verify kubernetes object in webapp namespace after create with script:**
+6.  **Verify kubernetes infrastructure in webapp namespace after create with bash script:**
     Navigate to the `helm/` directory and install the Helm chart for your application.
     ```bash
     kubectl get all -n webapp
@@ -140,11 +140,14 @@ Follow these steps to set up the infrastructure:
 7.  **Test routing to kubernetes service:**
 
     Get AWS load balance hostname/IP Address and test with curl command.
-     ```bash
+
+    ```bash
     kubectl descripe ingress -n webapp
-
+    ```
+    ```bash
     curl -i --header "Host: web.example.com" http://aff6168619c6a429b8e1e4b660a00173-1339339846.us-east-1.elb.amazonaws.com
-
+    ```
+    ```bash
     curl -i --header "Host: dev.web.example.com" http://aff6168619c6a429b8e1e4b660a00173-1339339846.us-east-1.elb.amazonaws.com
     ```
 ## Usage
