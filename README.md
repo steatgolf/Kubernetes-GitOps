@@ -103,43 +103,50 @@ Follow these steps to set up the infrastructure:
     terraform init
     ```
 
-2.  **Review and Modify Terraform Variables:**
-    Examine the `terraform/variables.tf` file and provide appropriate values in a `terraform.tfvars` file or through environment variables. This will include details like your cloud provider region, instance types, etc.
-
-3.  **Plan Terraform Infrastructure:**
+2.  **Plan Terraform Infrastructure:**
     ```bash
     terraform plan
     ```
     Review the output carefully to understand the resources that will be created.
 
-4.  **Apply Terraform Infrastructure:**
+3.  **Apply Terraform Infrastructure:**
     ```bash
     terraform apply -auto-approve
     ```
     This command will provision the necessary infrastructure on your cloud provider, including the Kubernetes cluster.
 
-5.  **Configure `kubectl`:**
-    Once the Kubernetes cluster is provisioned, you will need to configure `kubectl` to interact with it. The specific steps for this will depend on your cloud provider. Terraform outputs might provide the necessary information.
-
-6.  **Install Nginx Ingress Controller:**
-    Navigate to the `ingress/` directory and apply the Nginx Ingress controller manifest (or use Helm if a chart is available). Refer to the official Nginx Ingress Controller documentation for detailed installation instructions.
-    ```bash
-    cd ../ingress
-    kubectl apply -f nginx-ingress.yaml
+4.  **Authenticate with EKS cluster:**
+    Once the Kubernetes cluster is provisioned, you will need to authenticate with EKS cluster using `AWS cli`.
+    Authentication & Authorization: It uses your AWS credentials to authenticate with EKS and fetch details about the specified cluster.
+     ```bash
+    aws eks update-kubeconfig \
+    --region us-east-1 \
+    --name dev-cluster
     ```
-    **Note:** You might need to adjust the manifest based on your cloud provider's load balancer setup.
 
-7.  **Install the Application using Helm:**
+5.  **Create EKS namespace, deployment, service, nginx ingress and ArgoCD with bash script:**
+    Navigate to the `kubernetes/script` directory and execute bash script.
+    ```bash
+    cd ../kubernetes/script
+    ./script.sh
+    ```
+
+6.  **Verify kubernetes object in webapp namespace after create with script:**
     Navigate to the `helm/` directory and install the Helm chart for your application.
     ```bash
-    cd ../helm
-    helm install <release-name> . -n <namespace>
+    kubectl get all -n webapp
     ```
-    Replace `<release-name>` with a name for your application release and `<namespace>` with the Kubernetes namespace where you want to deploy it.
 
-8.  **Configure Ingress Rules:**
-    Ensure that your application's Helm chart or Kubernetes manifests include an Ingress resource (likely in `kubernetes/ingress.yaml` or within the Helm chart's `templates/` directory). This Ingress resource will define how external traffic is routed to your application's services via the Nginx Ingress controller.
+7.  **Test routing to kubernetes service:**
 
+    Get AWS load balance hostname/IP Address and test with curl command.
+     ```bash
+    kubectl descripe ingress -n webapp
+
+    curl -i --header "Host: web.example.com" http://aff6168619c6a429b8e1e4b660a00173-1339339846.us-east-1.elb.amazonaws.com
+
+    curl -i --header "Host: dev.web.example.com" http://aff6168619c6a429b8e1e4b660a00173-1339339846.us-east-1.elb.amazonaws.com
+    ```
 ## Usage
 
 Once the infrastructure and application are deployed:
