@@ -17,7 +17,7 @@ AWS EKS Infrastructure and application deployment using **Terraform**, **Helm**,
 
 ## Overview
 
-This project leverages a modern cloud-native technology stack to provision and manage the infrastructure required to run our application. We utilize Terraform for Infrastructure as Code (IaC), Kubernetes as the container orchestration platform, Helm as the Kubernetes package manager, Nginx Ingress as the entry point for external traffic and ArgoCD for automate the deployment and lifecycle management.
+This project leverages a modern cloud-native technology stack to provision and manage the infrastructure required to run nginx web application. We utilize Terraform for Infrastructure as Code (IaC), Kubernetes as the container orchestration platform, Helm as the Kubernetes package manager, Nginx Ingress as the entry point for external traffic and ArgoCD for automate the deployment and lifecycle management.
 
 This README provides an overview of the technologies used, the project structure, and instructions for setting up and managing the infrastructure.
 
@@ -68,7 +68,7 @@ Follow these steps to set up the infrastructure:
 
 4.  **Authenticate with EKS cluster**
 
-    Once the cluster is created, authenticate with EKS using the `AWS CLI`: specified cluster.
+    Once the cluster is created, authenticate with EKS using the `AWS CLI` specified cluster.
 
      ```bash
     aws eks update-kubeconfig \
@@ -97,12 +97,12 @@ Follow these steps to set up the infrastructure:
     ```bash
     kubectl descripe ingress -n webapp
     ```
-    Test routing with `curl` using the appropriate host headers. host = web.example.com (Route to nginx service port 80)
+    Test routing with `curl` using the appropriate host headers. `host = web.example.com` (Route to nginx service port 80)
     ```bash
     curl -i --header "Host: web.example.com" http://<loadbalance name or ip address>
     ```
 
-    Test routing with `curl` using the appropriate host headers. host = dev.web.example.com (Route to nginx service port 80)
+    Test routing with `curl` using the appropriate host headers. `host = dev.web.example.com` (Route to nginx service port 80)
     ```bash
     curl -i --header "Host: dev.web.example.com" http://<loadbalance name or ip address>
     ```
@@ -123,13 +123,13 @@ Follow these steps to set up the infrastructure:
     ```bash
     kubectl port-forward svc/argocd-server -n argocd 8080:80
     ```
-    Access Argo CD at http://localhost:8080 and login using the username `admin` and the decoded password.
+    Access Argo CD at http://localhost:8080 and login using the username `admin` and the `decoded password`.
 
 9.  **Test ArgoCD application**
 
     Modify deployment.yaml to change the number of replicas from 1 to 2. Wait a few minutes or manually trigger a sync in the Argo CD UI. You should see the number of nginx pods in `service name nginx` increase accordingly.
 
-8.  **Clean up project**
+10.  **Clean up**
 
     Delete kubernetes webapp namespace.
 
