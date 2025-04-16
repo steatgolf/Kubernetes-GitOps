@@ -132,55 +132,44 @@ Follow these steps to set up the infrastructure:
     ```
 
 6.  **Verify kubernetes infrastructure in webapp namespace after create with bash script:**
-    Navigate to the `helm/` directory and install the Helm chart for your application.
+    Verify deployment, service and pod is running
     ```bash
     kubectl get all -n webapp
     ```
 
 7.  **Test routing to kubernetes service:**
 
-    Get AWS load balance hostname/IP Address and test with curl command.
-
+    Get AWS load balance hostname or IP Address.
     ```bash
     kubectl descripe ingress -n webapp
     ```
+
+    Test with curl command with source host = web.example.com (Route to nginx service port 80 )
     ```bash
     curl -i --header "Host: web.example.com" http://aff6168619c6a429b8e1e4b660a00173-1339339846.us-east-1.elb.amazonaws.com
     ```
+
+    Test with curl command with source host = dev.web.example.com (Route to dev-nginx service port 80 )
     ```bash
     curl -i --header "Host: dev.web.example.com" http://aff6168619c6a429b8e1e4b660a00173-1339339846.us-east-1.elb.amazonaws.com
     ```
-## Usage
+8.  **Configure ArgoCD application:**
 
-Once the infrastructure and application are deployed:
-
-* Access your application through the public IP or DNS name associated with the Nginx Ingress controller, as defined in your Ingress rules.
-* Use `kubectl` to monitor the status of your application pods and services:
+    Get ArgoCD password from Kubernetes secrets.
     ```bash
-    kubectl get pods -n <namespace>
-    kubectl get services -n <namespace>
-    kubectl get ingress -n <namespace>
+    kubectl get secrets argocd-initial-admin-secret -o yaml -n argocd
     ```
-* Use Helm to manage application upgrades, rollbacks, and configuration changes:
+
+    Decode ArgoCD password.
     ```bash
-    helm upgrade <release-name> . -n <namespace> -f values-production.yaml # Example upgrade
-    helm history <release-name> -n <namespace> # View release history
-    helm rollback <release-name> <revision> -n <namespace> # Rollback to a previous revision
+    echo "<password before decode>" | base64 --decode
     ```
-* Modify Terraform configurations in the `terraform/` directory to scale your infrastructure or add new resources, and then apply the changes using `terraform apply`.
 
-## Contributing
+    Forward port argocd service and login with username `admin` and password in previous step.
+    ```bash
+    kubectl port-forward svc/argocd-server -n argocd 8080:80
+    ```
 
-[Link to your contributing guidelines if applicable]
+8.  **Test ArgoCD application:**
 
-## License
-
-[Link to your project's license if applicable]
-
-## Support
-
-[Information on how to get support for the project]
-
-## Authors
-
-[List of authors or contributors]
+    Edit replicas from 1 to 2 in deployment.yaml and wait 3 minutes or manual sync
