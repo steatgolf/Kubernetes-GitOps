@@ -17,7 +17,7 @@ AWS EKS Infrastructure and application deployment using **Terraform**, **Helm**,
 
 ## Overview
 
-This project leverages a modern cloud-native technology stack to provision and manage the infrastructure required to run our application. We utilize Terraform for Infrastructure as Code (IaC), Kubernetes as the container orchestration platform, Helm as the Kubernetes package manager, and Nginx Ingress as the entry point for external traffic.
+This project leverages a modern cloud-native technology stack to provision and manage the infrastructure required to run our application. We utilize Terraform for Infrastructure as Code (IaC), Kubernetes as the container orchestration platform, Helm as the Kubernetes package manager,Nginx Ingress as the entry point for external traffic and ArgoCD for automate the deployment and lifecycle management.
 
 This README provides an overview of the technologies used, the project structure, and instructions for setting up and managing the infrastructure.
 
@@ -67,8 +67,8 @@ Follow these steps to set up the infrastructure:
     This command will provision the necessary infrastructure on your cloud provider, including the Kubernetes cluster.
 
 4.  **Authenticate with EKS cluster:**
-    Once the Kubernetes cluster is provisioned, you will need to authenticate with EKS cluster using `AWS CLI`.
-    Authentication & Authorization: It uses your AWS credentials to authenticate with EKS and fetch details about the specified cluster.
+    Once the cluster is created, authenticate with EKS using the `AWS CLI`: specified cluster.
+
      ```bash
     aws eks update-kubeconfig \
     --region us-east-1 \
@@ -76,56 +76,55 @@ Follow these steps to set up the infrastructure:
     ```
 
 5.  **Create EKS resource and ArgoCD with bash script:**
-    Navigate to the `kubernetes/script` directory and execute bash script.
+    Run the setup script located in the `kubernetes/script` directory.
     ```bash
     cd ../kubernetes/script
     ./script.sh
     ```
 
-6.  **Verify kubernetes resource in webapp namespace after create with bash script:**
-    Verify deployment, service and pod is running.
+6.  **Verify kubernetes resource in webapp namespace:**
+    Ensure the application components (Deployments, Services, Pods) are running.
     ```bash
     kubectl get all -n webapp
     ```
 
-7.  **Test routing to kubernetes service:**
+7.  **Test external access via Nginx ingress:**
 
-    Get AWS load balance hostname or IP Address.
+    Retrieve the AWS Load Balancer hostname or IP.
     ```bash
     kubectl descripe ingress -n webapp
     ```
-
-    Test with curl command with source host = web.example.com (Route to nginx service port 80 )
+    Test routing with `curl` using the appropriate host headers. host = web.example.com (Route to nginx service port 80)
     ```bash
-    curl -i --header "Host: web.example.com" http://aff6168619c6a429b8e1e4b660a00173-1339339846.us-east-1.elb.amazonaws.com
+    curl -i --header "Host: web.example.com" http://<loadbalance name or ip>
     ```
 
-    Test with curl command with source host = dev.web.example.com (Route to dev-nginx service port 80 )
+    Test routing with `curl` using the appropriate host headers. host = dev.web.example.com (Route to nginx service port 80)
     ```bash
-    curl -i --header "Host: dev.web.example.com" http://aff6168619c6a429b8e1e4b660a00173-1339339846.us-east-1.elb.amazonaws.com
+    curl -i --header "Host: dev.web.example.com" http://<loadbalance name or ip>
     ```
-8.  **Initialize ArgoCD application:**
+8.  **Access ArgoCD application:**
 
-    Get ArgoCD password from Kubernetes secrets.
+    Retrieve the Argo CD admin password from kubernetes secrets.
+
     ```bash
     kubectl get secrets argocd-initial-admin-secret -o yaml -n argocd
     ```
 
-    Decode ArgoCD password.
+    Decode the password.
     ```bash
     echo "<password before decode>" | base64 --decode
     ```
 
-    Forward port argocd service and login with username `admin` and password in previous step.
+    Port-forward to access the Argo CD UI.
     ```bash
     kubectl port-forward svc/argocd-server -n argocd 8080:80
     ```
+    Access Argo CD at http://localhost:8080 and login using the username `admin` and the decoded password.
 
 9.  **Test ArgoCD application:**
 
-    Edit replicas from 1 to 2 in deployment.yaml, wait 3 minutes or manual sync.
-    Nginx pod in `service name nginx` will increase to 2.
-
+    Modify deployment.yaml to change the number of replicas from 1 to 2. Wait a few minutes or manually trigger a sync in the Argo CD UI. You should see the number of nginx pods in `service name nginx` increase accordingly.
 
 8.  **Clean up project:**
 
@@ -135,7 +134,7 @@ Follow these steps to set up the infrastructure:
     kubectl delete ns webapp
     terraform init
     ```
-    Delete EKS resource with terraform.
+    Destroy the Terraform-managed infrastructure.
 
     ```bash
     cd terraform
