@@ -17,7 +17,7 @@ AWS EKS Infrastructure and application deployment using **Terraform**, **Helm**,
 
 ## Overview
 
-This project leverages a modern cloud-native technology stack to provision and manage the infrastructure required to run our application. We utilize Terraform for Infrastructure as Code (IaC), Kubernetes as the container orchestration platform, Helm as the Kubernetes package manager,Nginx Ingress as the entry point for external traffic and ArgoCD for automate the deployment and lifecycle management.
+This project leverages a modern cloud-native technology stack to provision and manage the infrastructure required to run our application. We utilize Terraform for Infrastructure as Code (IaC), Kubernetes as the container orchestration platform, Helm as the Kubernetes package manager, Nginx Ingress as the entry point for external traffic and ArgoCD for automate the deployment and lifecycle management.
 
 This README provides an overview of the technologies used, the project structure, and instructions for setting up and managing the infrastructure.
 
@@ -48,25 +48,26 @@ Before you begin, ensure you have the following tools installed and configured:
 
 Follow these steps to set up the infrastructure:
 
-1.  **Initialize Terraform:**
+1.  **Initialize Terraform**
     ```bash
     cd terraform
     terraform init
     ```
 
-2.  **Plan Terraform Infrastructure:**
+2.  **Plan Terraform Infrastructure**
     ```bash
     terraform plan
     ```
     Review the output carefully to understand the resources that will be created.
 
-3.  **Apply Terraform Infrastructure:**
+3.  **Apply Terraform Infrastructure**
     ```bash
     terraform apply -auto-approve
     ```
     This command will provision the necessary infrastructure on your cloud provider, including the Kubernetes cluster.
 
-4.  **Authenticate with EKS cluster:**
+4.  **Authenticate with EKS cluster**
+
     Once the cluster is created, authenticate with EKS using the `AWS CLI`: specified cluster.
 
      ```bash
@@ -75,20 +76,22 @@ Follow these steps to set up the infrastructure:
     --name dev-cluster
     ```
 
-5.  **Create EKS resource and ArgoCD with bash script:**
+5.  **Create EKS resource and ArgoCD with bash script**
+
     Run the setup script located in the `kubernetes/script` directory.
     ```bash
     cd ../kubernetes/script
     ./script.sh
     ```
 
-6.  **Verify kubernetes resource in webapp namespace:**
+6.  **Verify kubernetes resource in webapp namespace**
+
     Ensure the application components (Deployments, Services, Pods) are running.
     ```bash
     kubectl get all -n webapp
     ```
 
-7.  **Test external access via Nginx ingress:**
+7.  **Test external access via Nginx ingress**
 
     Retrieve the AWS Load Balancer hostname or IP.
     ```bash
@@ -96,14 +99,14 @@ Follow these steps to set up the infrastructure:
     ```
     Test routing with `curl` using the appropriate host headers. host = web.example.com (Route to nginx service port 80)
     ```bash
-    curl -i --header "Host: web.example.com" http://<loadbalance name or ip>
+    curl -i --header "Host: web.example.com" http://<loadbalance name or ip address>
     ```
 
     Test routing with `curl` using the appropriate host headers. host = dev.web.example.com (Route to nginx service port 80)
     ```bash
-    curl -i --header "Host: dev.web.example.com" http://<loadbalance name or ip>
+    curl -i --header "Host: dev.web.example.com" http://<loadbalance name or ip address>
     ```
-8.  **Access ArgoCD application:**
+8.  **Access ArgoCD application**
 
     Retrieve the Argo CD admin password from kubernetes secrets.
 
@@ -122,11 +125,11 @@ Follow these steps to set up the infrastructure:
     ```
     Access Argo CD at http://localhost:8080 and login using the username `admin` and the decoded password.
 
-9.  **Test ArgoCD application:**
+9.  **Test ArgoCD application**
 
     Modify deployment.yaml to change the number of replicas from 1 to 2. Wait a few minutes or manually trigger a sync in the Argo CD UI. You should see the number of nginx pods in `service name nginx` increase accordingly.
 
-8.  **Clean up project:**
+8.  **Clean up project**
 
     Delete kubernetes webapp namespace.
 
