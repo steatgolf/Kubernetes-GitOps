@@ -81,7 +81,7 @@ Follow these steps to set up the infrastructure:
     Run the setup script located in the `kubernetes/script` directory.
     ```bash
     cd ../kubernetes/script
-    ./script.sh
+    ./provision_script.sh
     ```
 
 6.  **Verify kubernetes resource in webapp namespace**
@@ -143,4 +143,3 @@ Follow these steps to set up the infrastructure:
     cd terraform
     terraform destroy -auto-approve
     ```
-    
