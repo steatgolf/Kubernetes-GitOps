@@ -65,7 +65,6 @@ resource "aws_iam_role" "nodes" {
 POLICY
 }
 
-# This policy now includes AssumeRoleForPodIdentity for the Pod Identity Agent
 resource "aws_iam_role_policy_attachment" "amazon_eks_worker_node_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role       = aws_iam_role.nodes.name

@@ -8,7 +8,6 @@ resource "helm_release" "external_nginx" {
   depends_on       = [aws_eks_node_group.general]
 }
 
-# helm install argocd -n argocd --create-namespace argo/argo-cd --version 3.35.4 -f terraform/values/argocd.yaml
 resource "helm_release" "argocd" {
   name             = "argocd"
   repository       = "https://argoproj.github.io/argo-helm"

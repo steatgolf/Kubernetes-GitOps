@@ -129,17 +129,18 @@ Follow these steps to set up the infrastructure:
 
     Modify deployment.yaml to change the number of replicas from 1 to 2. Wait a few minutes or manually trigger a sync in the Argo CD UI. You should see the number of nginx pods in `service name nginx` increase accordingly.
 
-10.  **Clean up**
-
-    Delete kubernetes webapp namespace.
-
-     ```bash
-    kubectl delete ns webapp
-    terraform init
-    ```
-    Destroy the Terraform-managed infrastructure.
+10. **Clean up**
+    
+    Delete Kebernetes `webapp` namesapce.
 
     ```bash
+    kubectl delete ns webapp
+    ```
+
+    Destroy terraform infrastructure.
+
+     ```bash
     cd terraform
     terraform destroy -auto-approve
     ```
+    
